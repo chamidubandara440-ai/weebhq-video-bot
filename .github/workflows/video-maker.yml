@@ -20,7 +20,7 @@ jobs:
           sudo apt-get install -y ffmpeg
           python -m pip install --upgrade pip
           pip install edge-tts pillow moviepy playwright
-          pip install git+https://github.com/HuiiBuh/TikTok-Uploader.git
+          pip install https://github.com/HuiiBuh/TikTok-Uploader/archive/refs/heads/main.zip
           playwright install
 
       - name: Run Video Generator
