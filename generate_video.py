@@ -38,10 +38,7 @@ def main():
     audio = AudioFileClip(audio_path)
     duration = audio.duration
     
-    # Base Image Clip (9:16 aspect ratio)
     clip = ImageClip(image_path).set_duration(duration)
-    
-    # Crop to 9:16 (1080x1920)
     w, h = clip.size
     target_ratio = 9/16
     current_ratio = w/h
@@ -55,14 +52,31 @@ def main():
         clip = clip.crop(x1=0, y1=y_center-new_h/2, x2=w, y2=y_center+new_h/2)
         
     clip = clip.resize(width=1080, height=1920)
-    
-    # Set audio
     clip = clip.set_audio(audio)
     
-    # Render
     output_path = "output.mp4"
     clip.write_videofile(output_path, fps=24, codec="libx264", audio_codec="aac")
     print("Video rendered successfully!")
+    
+    # 4. Upload to TikTok
+    session_id = os.environ.get("TIKTOK_SESSION_ID")
+    if session_id:
+        print("Starting TikTok Upload...")
+        from tiktok_uploader.upload import upload_video
+        
+        # Create a simple netscape cookies file for tiktok-uploader
+        with open("cookies.txt", "w") as f:
+            f.write(f".tiktok.com\tTRUE\t/\tFALSE\t2147483647\tsessionid\t{session_id}\n")
+            
+        description = f"{title} #anime #animenews #manga #weebhq"
+        
+        try:
+            upload_video('output.mp4', description=description, cookies='cookies.txt')
+            print("Successfully uploaded to TikTok!")
+        except Exception as e:
+            print(f"TikTok upload failed: {e}")
+    else:
+        print("No TIKTOK_SESSION_ID found. Skipping upload.")
 
 if __name__ == "__main__":
     main()
