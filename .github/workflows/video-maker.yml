@@ -8,6 +8,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+        with:
+          persist-credentials: false
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -20,7 +22,11 @@ jobs:
           sudo apt-get install -y ffmpeg
           python -m pip install --upgrade pip
           pip install edge-tts pillow moviepy playwright
-          pip install https://github.com/HuiiBuh/TikTok-Uploader/archive/refs/heads/main.zip
+          wget https://github.com/HuiiBuh/TikTok-Uploader/archive/refs/heads/main.zip -O tiktok.zip
+          unzip tiktok.zip
+          cd TikTok-Uploader-main
+          pip install .
+          cd ..
           playwright install
 
       - name: Run Video Generator
