@@ -21,7 +21,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y ffmpeg
           python -m pip install --upgrade pip
-          pip install edge-tts pillow moviepy playwright
+          pip install edge-tts pillow moviepy playwright requests
           wget https://github.com/wkaisertexas/tiktok-uploader/archive/refs/heads/main.zip -O tiktok.zip
           unzip tiktok.zip
           cd tiktok-uploader-main
@@ -32,4 +32,6 @@ jobs:
       - name: Run Video Generator
         env:
           TIKTOK_SESSION_ID: ${{ secrets.TIKTOK_SESSION_ID }}
+          FB_PAGE_TOKEN: ${{ secrets.FB_PAGE_TOKEN }}
+          FB_PAGE_ID: ${{ secrets.FB_PAGE_ID }}
         run: python generate_video.py "${{ github.event.client_payload.title }}" "${{ github.event.client_payload.summary }}" "${{ github.event.client_payload.image_url }}" "${{ github.event.client_payload.permalink }}"
