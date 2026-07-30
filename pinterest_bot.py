@@ -46,6 +46,13 @@ def get_safebooru_wallpapers():
     wallpapers = []
     for p in posts:
         post_id = str(p.get('id', ''))
+        width = int(p.get('width', 0))
+        height = int(p.get('height', 0))
+        
+        # Pinterest prefers vertical images (2:3 aspect ratio). Filter out landscape.
+        if height <= width:
+            continue
+            
         # Safebooru image url format: https://safebooru.org/images/directory/image.jpg
         img_url = f"https://safebooru.org/images/{p.get('directory')}/{p.get('image')}"
         title = "Awesome Anime Wallpaper"
