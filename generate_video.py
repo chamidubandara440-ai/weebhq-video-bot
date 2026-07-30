@@ -161,5 +161,62 @@ def main():
     else:
         print("No TIKTOK_SESSION_ID found. Skipping upload.")
 
+    # 6. Upload to Facebook Reels
+    fb_token = os.environ.get("FB_PAGE_TOKEN")
+    fb_page_id = os.environ.get("FB_PAGE_ID")
+    
+    if fb_token and fb_page_id:
+        print("Starting Facebook Reels Upload...")
+        import requests
+        
+        # Step 1: Initialize Upload
+        init_url = f"https://graph.facebook.com/v19.0/{fb_page_id}/video_reels"
+        init_data = {
+            "upload_phase": "start",
+            "access_token": fb_token
+        }
+        res = requests.post(init_url, data=init_data)
+        if res.status_code == 200:
+            res_json = res.json()
+            video_id = res_json.get('video_id')
+            upload_url = res_json.get('upload_url')
+            
+            if video_id and upload_url:
+                print(f"FB Video ID: {video_id}. Uploading...")
+                
+                # Step 2: Upload Video Data
+                headers = {
+                    "Authorization": f"OAuth {fb_token}",
+                    "file_offset": "0"
+                }
+                with open('output.mp4', 'rb') as f:
+                    file_data = f.read()
+                
+                upload_res = requests.post(upload_url, headers=headers, data=file_data)
+                if upload_res.status_code == 200:
+                    print("Upload complete. Publishing...")
+                    
+                    # Step 3: Finish Upload & Publish
+                    finish_data = {
+                        "upload_phase": "finish",
+                        "access_token": fb_token,
+                        "video_id": video_id,
+                        "video_state": "PUBLISHED",
+                        "description": f"{title}\n\n#anime #animenews #weebhq #manga"
+                    }
+                    pub_res = requests.post(init_url, data=finish_data)
+                    if pub_res.status_code == 200:
+                        print("Successfully uploaded and published to Facebook Reels!")
+                    else:
+                        print("FB Publish failed:", pub_res.text)
+                else:
+                    print("FB Upload chunk failed:", upload_res.text)
+            else:
+                print("FB Init failed to return video_id/upload_url")
+        else:
+            print("FB Init failed:", res.text)
+    else:
+        print("No FB_PAGE_TOKEN or FB_PAGE_ID found. Skipping FB Reels upload.")
+
 if __name__ == "__main__":
     main()
