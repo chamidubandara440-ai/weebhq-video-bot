@@ -2,31 +2,32 @@ import os
 import json
 import random
 import requests
-from urllib.parse import urlparse
+import re
 
 def get_reddit_wallpapers():
-    url = "https://www.reddit.com/r/Animewallpaper/new.json?limit=50"
-    headers = {"User-Agent": "python:weebhq.pinterest.bot:v1.0 (by /u/weebhq)"}
-    res = requests.get(url, headers=headers)
+    url = "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fwww.reddit.com%2Fr%2FAnimewallpaper%2Fnew.rss"
+    res = requests.get(url)
     if res.status_code != 200:
-        print("Failed to fetch from Reddit.")
+        print(f"Failed to fetch from RSS proxy. Status: {res.status_code}")
         return []
     
-    posts = res.json().get('data', {}).get('children', [])
+    posts = res.json().get('items', [])
     wallpapers = []
     
     for p in posts:
-        data = p.get('data', {})
-        url = data.get('url', '')
-        title = data.get('title', 'Anime Wallpaper')
-        post_id = data.get('id', '')
+        title = p.get('title', 'Anime Wallpaper')
+        post_id = p.get('guid', '')
+        content = p.get('content', '')
         
-        # Only accept direct image links
-        if url.endswith(('.jpg', '.jpeg', '.png')):
+        # Extract the high-res image link from the HTML content
+        # It looks like: <a href="https://i.redd.it/xyz.png">[link]</a>
+        match = re.search(r'<a href="(https://i\.redd\.it/[^"]+)">\[link\]</a>', content)
+        if match:
+            image_url = match.group(1)
             wallpapers.append({
                 'id': post_id,
                 'title': title,
-                'url': url
+                'url': image_url
             })
             
     return wallpapers
@@ -44,7 +45,6 @@ def save_history(post_id):
 def pin_to_pinterest(image_url, title, token, board_id):
     url = "https://api.pinterest.com/v5/pins"
     
-    # Clean up title for description
     description = f"{title}\n\nFind more awesome Anime content and news at WeebHQ!\n#anime #animewallpaper #weebhq #manga #otaku"
     
     payload = {
@@ -79,7 +79,7 @@ def main():
         print("Missing Pinterest secrets. Exiting.")
         return
         
-    print("Fetching wallpapers from Reddit...")
+    print("Fetching wallpapers from Reddit via RSS Proxy...")
     wallpapers = get_reddit_wallpapers()
     
     if not wallpapers:
