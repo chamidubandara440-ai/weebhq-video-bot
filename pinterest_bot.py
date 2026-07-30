@@ -5,31 +5,55 @@ import requests
 import re
 
 def get_reddit_wallpapers():
-    url = "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fwww.reddit.com%2Fr%2FAnimewallpaper%2Fnew.rss"
-    res = requests.get(url)
+    url = "https://www.reddit.com/r/Animewallpaper/new.json?limit=50"
+    headers = {"User-Agent": "python:weebhq.pinterest.bot:v1.0 (by /u/weebhq)"}
+    res = requests.get(url, headers=headers)
     if res.status_code != 200:
-        print(f"Failed to fetch from RSS proxy. Status: {res.status_code}")
-        return []
+        print(f"Failed to fetch from Reddit API. Status: {res.status_code}")
+        # Fallback to safebooru if Reddit blocks us
+        return get_safebooru_wallpapers()
     
-    posts = res.json().get('items', [])
+    posts = res.json().get('data', {}).get('children', [])
     wallpapers = []
     
     for p in posts:
-        title = p.get('title', 'Anime Wallpaper')
-        post_id = p.get('guid', '')
-        content = p.get('content', '')
+        data = p.get('data', {})
+        title = data.get('title', 'Anime Wallpaper')
+        post_id = data.get('id', '')
+        url = data.get('url', '')
         
-        # Extract the high-res image link from the HTML content
-        # It looks like: <a href="https://i.redd.it/xyz.png">[link]</a>
-        match = re.search(r'<a href="(https://i\.redd\.it/[^"]+)">\[link\]</a>', content)
-        if match:
-            image_url = match.group(1)
+        if url.endswith(('.jpg', '.png', '.jpeg')):
             wallpapers.append({
                 'id': post_id,
                 'title': title,
-                'url': image_url
+                'url': url
             })
             
+    if not wallpapers:
+        return get_safebooru_wallpapers()
+        
+    return wallpapers
+
+def get_safebooru_wallpapers():
+    print("Fetching from Safebooru as fallback...")
+    url = "https://safebooru.org/index.php?page=dapi&s=post&q=index&json=1&limit=50&tags=wallpaper"
+    res = requests.get(url)
+    if res.status_code != 200:
+        print("Safebooru fetch failed.")
+        return []
+        
+    posts = res.json()
+    wallpapers = []
+    for p in posts:
+        post_id = str(p.get('id', ''))
+        # Safebooru image url format: https://safebooru.org/images/directory/image.jpg
+        img_url = f"https://safebooru.org/images/{p.get('directory')}/{p.get('image')}"
+        title = "Awesome Anime Wallpaper"
+        wallpapers.append({
+            'id': "safebooru_" + post_id,
+            'title': title,
+            'url': img_url
+        })
     return wallpapers
 
 def load_history():
