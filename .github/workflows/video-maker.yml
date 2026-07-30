@@ -22,9 +22,9 @@ jobs:
           sudo apt-get install -y ffmpeg
           python -m pip install --upgrade pip
           pip install edge-tts pillow moviepy playwright
-          wget https://github.com/HuiiBuh/TikTok-Uploader/archive/refs/heads/main.zip -O tiktok.zip
+          wget https://github.com/wkaisertexas/tiktok-uploader/archive/refs/heads/main.zip -O tiktok.zip
           unzip tiktok.zip
-          cd TikTok-Uploader-main
+          cd tiktok-uploader-main
           pip install .
           cd ..
           playwright install
