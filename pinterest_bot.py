@@ -43,7 +43,7 @@ def save_history(post_id):
         f.write(f"{post_id}\n")
 
 def pin_to_pinterest(image_url, title, token, board_id):
-    url = "https://api.pinterest.com/v5/pins"
+    url = "https://api-sandbox.pinterest.com/v5/pins"
     
     description = f"{title}\n\nFind more awesome Anime content and news at WeebHQ!\n#anime #animewallpaper #weebhq #manga #otaku"
     
