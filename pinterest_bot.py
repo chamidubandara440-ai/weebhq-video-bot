@@ -6,7 +6,7 @@ from urllib.parse import urlparse
 
 def get_reddit_wallpapers():
     url = "https://www.reddit.com/r/Animewallpaper/new.json?limit=50"
-    headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"}
+    headers = {"User-Agent": "python:weebhq.pinterest.bot:v1.0 (by /u/weebhq)"}
     res = requests.get(url, headers=headers)
     if res.status_code != 200:
         print("Failed to fetch from Reddit.")
