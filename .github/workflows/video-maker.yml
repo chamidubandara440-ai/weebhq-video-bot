@@ -21,7 +21,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y ffmpeg
           python -m pip install --upgrade pip
-          pip install edge-tts pillow moviepy playwright requests
+          pip install edge-tts pillow "moviepy<2.0.0" playwright requests
           wget https://github.com/wkaisertexas/tiktok-uploader/archive/refs/heads/main.zip -O tiktok.zip
           unzip tiktok.zip
           cd tiktok-uploader-main
