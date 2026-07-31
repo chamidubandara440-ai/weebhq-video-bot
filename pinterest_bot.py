@@ -36,7 +36,9 @@ def get_reddit_wallpapers():
 
 def get_safebooru_wallpapers():
     print("Fetching from Safebooru as fallback...")
-    url = "https://safebooru.org/index.php?page=dapi&s=post&q=index&json=1&limit=50&tags=wallpaper"
+    # Pick a random page to ensure we always get fresh images that aren't in history
+    page = random.randint(1, 50)
+    url = f"https://safebooru.org/index.php?page=dapi&s=post&q=index&json=1&limit=100&pid={page}&tags=highres"
     res = requests.get(url)
     if res.status_code != 200:
         print("Safebooru fetch failed.")
@@ -49,18 +51,33 @@ def get_safebooru_wallpapers():
         width = int(p.get('width', 0))
         height = int(p.get('height', 0))
         
-        # Pinterest prefers vertical images (2:3 aspect ratio). Filter out landscape.
+        # Pinterest prefers vertical images (2:3 aspect ratio).
         if height <= width:
             continue
             
         # Safebooru image url format: https://safebooru.org/images/directory/image.jpg
         img_url = f"https://safebooru.org/images/{p.get('directory')}/{p.get('image')}"
-        title = "Awesome Anime Wallpaper"
+        
+        # Create a nice title from tags
+        tags = p.get('tags', '').split()
+        character = "Anime"
+        for t in tags:
+            if "girl" in t or "boy" in t:
+                continue
+            if len(t) > 3 and not t.isnumeric():
+                character = t.replace('_', ' ').title()
+                break
+                
+        title = f"{character} - Aesthetic Anime Wallpaper"
+        
         wallpapers.append({
             'id': "safebooru_" + post_id,
             'title': title,
             'url': img_url
         })
+        
+    # Shuffle so we pick a random one from this page
+    random.shuffle(wallpapers)
     return wallpapers
 
 def load_history():
