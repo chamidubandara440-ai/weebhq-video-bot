@@ -99,7 +99,7 @@ def pin_to_pinterest(image_url, title, token, board_id):
         "board_id": board_id,
         "title": title[:100],  # Max 100 chars
         "description": description[:500],
-        "link": "https://weebhq.com",
+        "link": "https://withered-night-f11e.dulshanchamidu971.workers.dev",
         "media_source": {
             "source_type": "image_url",
             "url": image_url
