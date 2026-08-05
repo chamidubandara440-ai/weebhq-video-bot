@@ -93,7 +93,7 @@ def save_history(post_id):
 def pin_to_pinterest(image_url, title, token, board_id):
     url = "https://api-sandbox.pinterest.com/v5/pins"
     
-    description = f"{title}\n\nFind more awesome Anime content and news at WeebHQ!\n#anime #animewallpaper #weebhq #manga #otaku"
+    description = "#bestanimewallpaper #animewallpapers #liveanimewallpapers #freeanimewallpapers #animelivewallpaperspc #animelivewallpaperswallpaperengine #animewallpaper #animelivewallpapersforwallpaperengine #animegirlslivewallpapers4k #4kanimewallpaper #hdanimewallpaper #topanimewallpaper #liveanimewallpaper #animelivewallpaper #cuteanimewallpaper #animewallpaperlive #freeanimewallpaper #anime4kwallpaper #anime3dwallpaper #animewallpaperforpc #animephonewallpaper #anime4klivewallpaper"
     
     payload = {
         "board_id": board_id,
