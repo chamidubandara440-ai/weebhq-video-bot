@@ -91,7 +91,7 @@ def save_history(post_id):
         f.write(f"{post_id}\n")
 
 def pin_to_pinterest(image_url, title, token, board_id):
-    url = "https://api-sandbox.pinterest.com/v5/pins"
+    url = "https://api.pinterest.com/v5/pins"
     
     description = "#bestanimewallpaper #animewallpapers #liveanimewallpapers #freeanimewallpapers #animelivewallpaperspc #animelivewallpaperswallpaperengine #animewallpaper #animelivewallpapersforwallpaperengine #animegirlslivewallpapers4k #4kanimewallpaper #hdanimewallpaper #topanimewallpaper #liveanimewallpaper #animelivewallpaper #cuteanimewallpaper #animewallpaperlive #freeanimewallpaper #anime4kwallpaper #anime3dwallpaper #animewallpaperforpc #animephonewallpaper #anime4klivewallpaper"
     
